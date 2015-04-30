@@ -1,3 +1,5 @@
+require 'io/console'
+
 class HumanPlayer
   def initialize(board, color)
     @board = board
@@ -5,6 +7,7 @@ class HumanPlayer
   end
 
   def get_move
+
     print "Enter a start pos > "
     start_pos = gets.chomp.split.map(&:to_i)
     print "Enter an end pos > "

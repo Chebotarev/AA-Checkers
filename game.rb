@@ -1,4 +1,5 @@
 require_relative 'board'
+require_relative 'errors'
 require_relative 'players/human_player'
 require_relative 'players/computer_player'
 
@@ -11,9 +12,13 @@ class Game
 
   def play
     while true
-      @board.render
-      start_pos, end_pos = @player_white.get_move
-      @board.move(start_pos, end_pos)
+      begin
+        @board.render
+        start_pos, end_pos = @player_white.get_move
+        @board.move(start_pos, end_pos)
+      rescue InvalidMove => e
+        puts e.message
+      end
     end
 
   end

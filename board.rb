@@ -7,6 +7,7 @@ class Board
   def initialize
     @grid = Array.new(8) { Array.new(8) }
     setup_board
+    @cursor = [0, 0]
   end
 
   def [](pos)
@@ -25,9 +26,13 @@ class Board
     !!piece_at(pos)
   end
 
+  def on_board?(pos)
+    pos.all? { |coord| coord.between?(0, 7)}
+  end
+
   def move(start_pos, end_pos)
-    raise "NO PIECE" unless occupied?(start_pos)
-    raise "INVALID MOVE" unless piece_at(start_pos).perform_jump(end_pos)
+    raise InvalidMove unless occupied?(start_pos)
+    raise InvalidMove unless piece_at(start_pos).perform_slide(end_pos)
   end
 
   def render
@@ -36,7 +41,9 @@ class Board
     @grid.each_with_index do |row, i|
       print i
       row.each_with_index do |space, j|
-        if (i + j).odd?
+        if @cursor == [i, j]
+          background = :yellow
+        elsif (i + j).odd?
           background = :light_black
         else
           background = :light_blue
@@ -56,17 +63,17 @@ class Board
 
   def setup_board
     # Kinged Test Case
-    # @grid[6][4] = Piece.new(board: self, color: :white, pos: [6, 4])
+    @grid[6][4] = Piece.new(board: self, color: :white, pos: [6, 4])
 
-    @grid.each_with_index do |row, i|
-      row.each_with_index do |space, j|
-        if (i + j).odd? && i < 3
-          self[[i, j]] = Piece.new(board: self, color: :white, pos: [i, j])
-        elsif
-           (i + j).odd? && i > 4
-          self[[i, j]] = Piece.new(board: self, color: :black, pos: [i, j])
-        end
-      end
-    end
+    # @grid.each_with_index do |row, i|
+    #   row.each_with_index do |space, j|
+    #     if (i + j).odd? && i < 3
+    #       self[[i, j]] = Piece.new(board: self, color: :white, pos: [i, j])
+    #     elsif
+    #        (i + j).odd? && i > 4
+    #       self[[i, j]] = Piece.new(board: self, color: :black, pos: [i, j])
+    #     end
+    #   end
+    # end
   end
 end

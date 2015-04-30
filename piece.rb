@@ -33,7 +33,7 @@ class Piece
   def perform_slide(end_pos)
     # debugger
 
-    if moves.include?(end_pos)
+    if slides.include?(end_pos)
       move_to!(end_pos)
       return true
     end
@@ -42,7 +42,7 @@ class Piece
   end
 
   def perform_jump(end_pos)
-    if moves.include?(end_pos)
+    if jumps.include?(end_pos) && @board.piece_at(jumped_piece_pos(end_pos))
       @board[jumped_piece_pos(end_pos)] = nil
       move_to!(end_pos)
       return true
@@ -52,11 +52,21 @@ class Piece
   end
 
   def moves
-    move_diffs.map.with_index do |move_diff, i|
+    moves = move_diffs.map.with_index do |move_diff, i|
       move_diff.map.with_index do |deltas, j|
         deltas + @pos[j]
       end
     end
+
+    moves.select { |move| @board.on_board?(move) }
+  end
+
+  def jumps
+    moves.select { |move| (move.first - @pos.first).abs == 2 }
+  end
+
+  def slides
+    moves.select { |move| (move.first - @pos.first).abs == 1 }
   end
 
   def move_diffs
