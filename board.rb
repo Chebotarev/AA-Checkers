@@ -18,16 +18,21 @@ class Board
   end
 
   def piece_at(pos)
-    self[pos]
+    self.grid[pos.first][pos.last]
+  end
+
+  def occupied?(pos)
+    !!piece_at(pos)
   end
 
   def move(start_pos, end_pos)
-    piece_at(start_pos).perform_slide(end_pos)
+    raise "NO PIECE" unless occupied?(start_pos)
+    raise "INVALID MOVE" unless piece_at(start_pos).perform_jump(end_pos)
   end
 
   def render
     system('clear')
-    puts (0..8).to_a.join(" ")
+    puts " " + (0..7).to_a.join(" ")
     @grid.each_with_index do |row, i|
       print i
       row.each_with_index do |space, j|
@@ -45,11 +50,14 @@ class Board
       end
       puts i
     end
-    puts (0..8).to_a.join(" ")
+    puts " " + (0..7).to_a.join(" ")
 
   end
 
   def setup_board
+    # Kinged Test Case
+    # @grid[6][4] = Piece.new(board: self, color: :white, pos: [6, 4])
+
     @grid.each_with_index do |row, i|
       row.each_with_index do |space, j|
         if (i + j).odd? && i < 3
