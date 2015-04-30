@@ -1,5 +1,5 @@
-class InvalidMove < ArgumentError
-  def message
-    "Invalid move!"
-  end
+class InvalidMoveError < ArgumentError
+  # def message
+  #   "Invalid move!"
+  # end
 end

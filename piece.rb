@@ -1,4 +1,5 @@
 require 'byebug'
+require_relative 'errors'
 
 class Piece
   UP_MOVES = [
@@ -21,7 +22,7 @@ class Piece
     [-2, -2]
   ]
 
-  attr_reader :color, :kinged
+  attr_reader :color, :kinged, :pos
 
   def initialize(params)
     @board = params[:board]
@@ -42,13 +43,34 @@ class Piece
   end
 
   def perform_jump(end_pos)
-    if jumps.include?(end_pos) && @board.piece_at(jumped_piece_pos(end_pos))
+    if jumps.include?(end_pos) && @board.occupied?(jumped_piece_pos(end_pos))
       @board[jumped_piece_pos(end_pos)] = nil
       move_to!(end_pos)
       return true
     end
 
     false
+  end
+
+  def perform_moves(sequence)
+    if valid_move_seq?(sequence)
+      perform_moves!(sequence)
+    else
+      raise InvalidMoveError.new("Not valid sequence")
+    end
+  end
+
+  def perform_moves!(sequence)
+    debugger
+    if sequence.length == 1 && slides.include?(sequence.first)
+      perform_slide(sequence.first)
+    elsif jumps.include?(sequence.first)
+      sequence.each do |jump|
+        raise InvalidMoveError.new("Couldn't Jump") unless perform_jump(jump)
+      end
+    else
+      raise InvalidMoveError.new("Not all jumps")
+    end
   end
 
   def moves
@@ -92,6 +114,16 @@ class Piece
 
   def maybe_promote
     @kinged = true if @pos.first == 0 || @pos.first == 7
+  end
+
+  def valid_move_seq?(sequence)
+    begin
+      @board.deep_dup.piece_at(@pos).perform_moves!(sequence)
+    rescue InvalidMoveError => e
+      return false
+    end
+
+    true
   end
 
   def symbol

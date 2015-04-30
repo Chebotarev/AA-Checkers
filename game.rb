@@ -14,8 +14,8 @@ class Game
     while true
       begin
         @board.render
-        start_pos, end_pos = @player_white.get_move
-        @board.move(start_pos, end_pos)
+        start_pos, sequence = @player_white.get_move
+        @board.move(start_pos, sequence)
       rescue InvalidMove => e
         puts e.message
       end
