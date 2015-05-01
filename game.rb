@@ -11,12 +11,13 @@ class Game
   end
 
   def play
-    while true
+    4.times do
       begin
         @board.render
-        start_pos, sequence = @player_white.get_move
-        @board.move(start_pos, sequence)
-      rescue InvalidMove => e
+        start_pos, end_pos = @player_white.make_move
+        @board.move(start_pos, end_pos)
+        @board.render
+      rescue InvalidMoveError => e
         puts e.message
       end
     end

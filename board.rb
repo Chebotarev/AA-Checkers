@@ -2,6 +2,7 @@ require 'colorize'
 require_relative 'piece.rb'
 
 class Board
+  attr_reader :cursor
   attr_accessor :grid
 
   def initialize(setup = true)
@@ -47,9 +48,34 @@ class Board
     pos.all? { |coord| coord.between?(0, 7)}
   end
 
-  def move(start_pos, sequence)
-    # raise InvalidMoveError unless occupied?(sequence.first)
-    raise InvalidMoveError unless piece_at(start_pos).perform_moves(sequence)
+  def move(start_pos, end_pos)
+    raise NoPieceError unless occupied?(start_pos)
+    current_piece = piece_at(start_pos)
+    if current_piece.slides.include?(end_pos)
+      current_piece.perform_slide(end_pos)
+    elsif current_piece.jumps.include?(end_pos)
+      current_piece.perform_jump(end_pos)
+    else
+      raise InvalidMoveError
+    end
+
+    # raise InvalidMoveError unless piece_at(start_pos).perform_jump(end_pos)
+  end
+
+  def move_cursor(command_string)
+    duped_cursor = @cursor.dup
+    case command_string
+    when "\e[A"
+      @cursor[0] -= 1
+    when "\e[B"
+      @cursor[0] += 1
+    when "\e[C"
+      @cursor[1] += 1
+    when "\e[D"
+      @cursor[1] -= 1
+    end
+    @cursor = duped_cursor unless on_board?(@cursor)
+    render
   end
 
   def render
@@ -83,21 +109,21 @@ class Board
     # @grid[6][4] = Piece.new(board: self, color: :white, pos: [6, 4])
 
     # Sequence Jump Test Case
-    @grid[0][0] = Piece.new(board: self, color: :white, pos: [0, 0])
-    @grid[1][1] = Piece.new(board: self, color: :black, pos: [1, 1])
-    @grid[3][3] = Piece.new(board: self, color: :black, pos: [3, 3])
+    # @grid[0][0] = Piece.new(board: self, color: :white, pos: [0, 0])
+    # @grid[1][1] = Piece.new(board: self, color: :black, pos: [1, 1])
+    # @grid[3][3] = Piece.new(board: self, color: :black, pos: [3, 3])
 
-
-    # @grid.each_with_index do |row, i|
-    #   row.each_with_index do |space, j|
-    #     if (i + j).odd? && i < 3
-    #       self[[i, j]] = Piece.new(board: self, color: :white, pos: [i, j])
-    #     elsif
-    #        (i + j).odd? && i > 4
-    #       self[[i, j]] = Piece.new(board: self, color: :black, pos: [i, j])
-    #     end
-    #   end
-    # end
+    # Full Board Setup
+    @grid.each_with_index do |row, i|
+      row.each_with_index do |space, j|
+        if (i + j).odd? && i < 3
+          self[[i, j]] = Piece.new(board: self, color: :white, pos: [i, j])
+        elsif
+           (i + j).odd? && i > 4
+          self[[i, j]] = Piece.new(board: self, color: :black, pos: [i, j])
+        end
+      end
+    end
   end
 end
 

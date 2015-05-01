@@ -3,3 +3,7 @@ class InvalidMoveError < ArgumentError
   #   "Invalid move!"
   # end
 end
+
+class NoPieceError < ArgumentError
+
+end

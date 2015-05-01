@@ -1,4 +1,3 @@
-require 'byebug'
 require_relative 'errors'
 
 class Piece
@@ -32,8 +31,6 @@ class Piece
   end
 
   def perform_slide(end_pos)
-    # debugger
-
     if slides.include?(end_pos)
       move_to!(end_pos)
       return true
@@ -61,7 +58,6 @@ class Piece
   end
 
   def perform_moves!(sequence)
-    debugger
     if sequence.length == 1 && slides.include?(sequence.first)
       perform_slide(sequence.first)
     elsif jumps.include?(sequence.first)
