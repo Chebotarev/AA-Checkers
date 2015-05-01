@@ -40,7 +40,7 @@ class Piece
   end
 
   def perform_jump(end_pos)
-    if jumps.include?(end_pos) && @board.occupied?(jumped_piece_pos(end_pos))
+    if jumps.include?(end_pos) && can_jump?(end_pos)
       @board[jumped_piece_pos(end_pos)] = nil
       move_to!(end_pos)
       return true
@@ -81,6 +81,11 @@ class Piece
 
   def jumps
     moves.select { |move| (move.first - @pos.first).abs == 2 }
+  end
+
+  def can_jump?(end_pos)
+
+    @board.occupied?(jumped_piece_pos(end_pos)) && @board.piece_at(jumped_piece_pos(end_pos)).color != @color
   end
 
   def slides

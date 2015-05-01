@@ -1,4 +1,5 @@
 require 'colorize'
+require 'byebug'
 require_relative 'piece.rb'
 
 class Board
@@ -48,13 +49,23 @@ class Board
     pos.all? { |coord| coord.between?(0, 7)}
   end
 
-  def move(start_pos, end_pos)
+  def won?
+    won = false
+    [:white, :black].each do |color|
+      won = true if pieces(color).empty?
+    end
+    won
+  end
+
+  def move(start_pos, sequence)
     raise NoPieceError unless occupied?(start_pos)
     current_piece = piece_at(start_pos)
-    if current_piece.slides.include?(end_pos)
-      current_piece.perform_slide(end_pos)
-    elsif current_piece.jumps.include?(end_pos)
-      current_piece.perform_jump(end_pos)
+    if sequence[1].is_a?(Array)
+      current_piece.perform_moves(sequence)
+    elsif current_piece.slides.include?(sequence)
+      raise InvalidMoveError unless current_piece.perform_slide(sequence)
+    elsif current_piece.jumps.include?(sequence)
+      raise InvalidMoveError unless current_piece.perform_jump(sequence)
     else
       raise InvalidMoveError
     end
@@ -109,21 +120,21 @@ class Board
     # @grid[6][4] = Piece.new(board: self, color: :white, pos: [6, 4])
 
     # Sequence Jump Test Case
-    # @grid[0][0] = Piece.new(board: self, color: :white, pos: [0, 0])
-    # @grid[1][1] = Piece.new(board: self, color: :black, pos: [1, 1])
-    # @grid[3][3] = Piece.new(board: self, color: :black, pos: [3, 3])
+    @grid[0][0] = Piece.new(board: self, color: :white, pos: [0, 0])
+    @grid[1][1] = Piece.new(board: self, color: :black, pos: [1, 1])
+    @grid[3][3] = Piece.new(board: self, color: :black, pos: [3, 3])
 
     # Full Board Setup
-    @grid.each_with_index do |row, i|
-      row.each_with_index do |space, j|
-        if (i + j).odd? && i < 3
-          self[[i, j]] = Piece.new(board: self, color: :white, pos: [i, j])
-        elsif
-           (i + j).odd? && i > 4
-          self[[i, j]] = Piece.new(board: self, color: :black, pos: [i, j])
-        end
-      end
-    end
+    # @grid.each_with_index do |row, i|
+    #   row.each_with_index do |space, j|
+    #     if (i + j).odd? && i < 3
+    #       self[[i, j]] = Piece.new(board: self, color: :white, pos: [i, j])
+    #     elsif
+    #        (i + j).odd? && i > 4
+    #       self[[i, j]] = Piece.new(board: self, color: :black, pos: [i, j])
+    #     end
+    #   end
+    # end
   end
 end
 

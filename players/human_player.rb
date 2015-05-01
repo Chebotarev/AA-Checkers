@@ -13,21 +13,30 @@ class HumanPlayer
 
     user_input = ''
     selected_pos = []
+    sequence = false
+
     until selected_pos.length == 2
       user_input = read_char
-      if user_input == "\r"
-        selected_pos << @board.cursor.dup
+      raise ForceQuitError if user_input == "\u0003"
+      current_selected = @board.cursor.dup
+
+      case user_input
+      when "\r"
+        puts "Selected #{current_selected}"
+        selected_pos << current_selected
+      when "s"
+        raise InvalidMoveError if current_selected.nil?
+        sequence = true
+        selected_pos << Array.new
       else
         @board.move_cursor(user_input)
       end
     end
 
+    if selected_pos[1].empty?
+      selected_pos[1] = get_sequence
+    end
     selected_pos
-    # i1 = @board.move_cursor
-    #
-    # i2 = @board.move_cursor
-    #
-    # [i1, i2]
   end
 
   def read_char
@@ -44,6 +53,29 @@ class HumanPlayer
     STDIN.cooked!
 
     return input
+  end
+
+  def get_sequence
+    user_input = ""
+    sequence = []
+
+    while true
+      user_input = read_char
+      raise ForceQuitError if user_input == "\u0003"
+
+      current_selected = @board.cursor.dup
+      case user_input
+      when "\r"
+        puts "Selected #{current_selected}"
+        sequence << current_selected
+      when "e"
+        break
+      else
+        @board.move_cursor(user_input)
+      end
+    end
+
+    sequence
   end
 
 end

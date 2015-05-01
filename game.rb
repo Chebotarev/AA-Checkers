@@ -1,3 +1,4 @@
+require 'byebug'
 require_relative 'board'
 require_relative 'errors'
 require_relative 'players/human_player'
@@ -11,11 +12,11 @@ class Game
   end
 
   def play
-    4.times do
+    until @board.won?
       begin
         @board.render
-        start_pos, end_pos = @player_white.make_move
-        @board.move(start_pos, end_pos)
+        start_pos, sequence = @player_white.make_move
+        @board.move(start_pos, sequence)
         @board.render
       rescue InvalidMoveError => e
         puts e.message
