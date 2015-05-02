@@ -7,17 +7,15 @@ require_relative 'players/computer_player'
 class Game
   def initialize(board, player1, player2)
     @board = board
-    @player_white = player1
-    @player_black = player2
+    @players = [player1, player2]
   end
 
   def play
     until @board.won?
       begin
         @board.render
-        start_pos, sequence = @player_white.make_move
+        start_pos, sequence = @players.first.make_move
         @board.move(start_pos, sequence)
-        @board.render
       rescue InvalidMoveError => e
         puts e.message
       end

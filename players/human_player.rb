@@ -22,7 +22,6 @@ class HumanPlayer
 
       case user_input
       when "\r"
-        puts "Selected #{current_selected}"
         selected_pos << current_selected
       when "s"
         raise InvalidMoveError if current_selected.nil?
@@ -66,7 +65,6 @@ class HumanPlayer
       current_selected = @board.cursor.dup
       case user_input
       when "\r"
-        puts "Selected #{current_selected}"
         sequence << current_selected
       when "e"
         break

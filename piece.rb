@@ -31,7 +31,7 @@ class Piece
   end
 
   def perform_slide(end_pos)
-    if slides.include?(end_pos)
+    if slides.include?(end_pos) && !@board.occupied?(end_pos)
       move_to!(end_pos)
       return true
     end
@@ -84,7 +84,6 @@ class Piece
   end
 
   def can_jump?(end_pos)
-
     @board.occupied?(jumped_piece_pos(end_pos)) && @board.piece_at(jumped_piece_pos(end_pos)).color != @color
   end
 
@@ -128,6 +127,6 @@ class Piece
   end
 
   def symbol
-    '☻'
+    color == :white ? "\u26aa" : "\u26ab"
   end
 end

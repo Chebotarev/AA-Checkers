@@ -91,9 +91,8 @@ class Board
 
   def render
     system('clear')
-    puts " " + (0..7).to_a.join(" ")
+    # puts " " + (0..7).to_a.join(" ")
     @grid.each_with_index do |row, i|
-      print i
       row.each_with_index do |space, j|
         if @cursor == [i, j]
           background = :yellow
@@ -106,13 +105,11 @@ class Board
         if space.nil?
           print "  ".colorize(background: background)
         else
-          print "#{space.symbol} ".colorize(color: space.color, background: background)
+          print "#{space.symbol} ".colorize(background: background)
         end
       end
-      puts i
+      puts
     end
-    puts " " + (0..7).to_a.join(" ")
-
   end
 
   def setup_board
@@ -120,21 +117,21 @@ class Board
     # @grid[6][4] = Piece.new(board: self, color: :white, pos: [6, 4])
 
     # Sequence Jump Test Case
-    @grid[0][0] = Piece.new(board: self, color: :white, pos: [0, 0])
-    @grid[1][1] = Piece.new(board: self, color: :black, pos: [1, 1])
-    @grid[3][3] = Piece.new(board: self, color: :black, pos: [3, 3])
+    # @grid[0][0] = Piece.new(board: self, color: :white, pos: [0, 0])
+    # @grid[1][1] = Piece.new(board: self, color: :black, pos: [1, 1])
+    # @grid[3][3] = Piece.new(board: self, color: :black, pos: [3, 3])
 
-    # Full Board Setup
-    # @grid.each_with_index do |row, i|
-    #   row.each_with_index do |space, j|
-    #     if (i + j).odd? && i < 3
-    #       self[[i, j]] = Piece.new(board: self, color: :white, pos: [i, j])
-    #     elsif
-    #        (i + j).odd? && i > 4
-    #       self[[i, j]] = Piece.new(board: self, color: :black, pos: [i, j])
-    #     end
-    #   end
-    # end
+    #Full Board Setup
+    @grid.each_with_index do |row, i|
+      row.each_with_index do |space, j|
+        if (i + j).odd? && i < 3
+          self[[i, j]] = Piece.new(board: self, color: :white, pos: [i, j])
+        elsif
+           (i + j).odd? && i > 4
+          self[[i, j]] = Piece.new(board: self, color: :black, pos: [i, j])
+        end
+      end
+    end
   end
 end
 
