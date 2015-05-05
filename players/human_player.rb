@@ -1,6 +1,8 @@
 require 'io/console'
 
 class HumanPlayer
+  attr_reader :color
+
   def initialize(board, color)
     @board = board
     @color = color

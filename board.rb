@@ -4,7 +4,7 @@ require_relative 'piece.rb'
 
 class Board
   attr_reader :cursor
-  attr_accessor :grid
+  attr_accessor :grid, :system_message
 
   def initialize(setup = true)
     @grid = Array.new(8) { Array.new(8) }
@@ -91,7 +91,7 @@ class Board
 
   def render
     system('clear')
-    # puts " " + (0..7).to_a.join(" ")
+    puts "#{@system_message}"
     @grid.each_with_index do |row, i|
       row.each_with_index do |space, j|
         if @cursor == [i, j]
